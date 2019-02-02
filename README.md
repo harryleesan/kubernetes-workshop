@@ -33,7 +33,7 @@
 
 <!-- vim-markdown-toc -->
 
-# Preparation
+## Preparation
 
 The Kubernetes cluster should be created prior to this workshop with the following addons:
 
@@ -51,7 +51,7 @@ You should have the following installed on your local machine:
   * Ensure that `kubectl` is in the $PATH of `bash`.
 - `helm`
 
-# Reference
+## Reference
 
 - _username_ - The user that is created for you by the organiser for this
   workshop. Should be your first name appended with the first letter of your
@@ -85,9 +85,7 @@ The interaction with the cluster is done through `kubectl`.
 
 3. Run `kubectl proxy`, do not close the terminal.
 
-4. Open web browser and navigate to:
-
-  [http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/)
+4. Open your web browser and navigate to: [http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/)
 
 5. Log in using the `token` method (paste the token that you retrieved from the
    first step).
@@ -131,11 +129,9 @@ Run the commands below from the `lab-2` directory.
     ```bash
     kubectl proxy
     ```
-2. Access the dashboard
+2. Access the dashboard: [http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/)
 
-    [http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/)
-
-3. Navigate to your namespace and check if all 4 pods are up.
+3. Navigate to your namespace and check if all 4 pods are running.
 
 4. Then check if the 4 services associated with the 4 pods are created correctly.
 
@@ -238,8 +234,6 @@ Now your application is deployed. Let's see how it's doing.
 We can access the logs of pods from the Kubernetes dashboard.
 
 1. Access the dashboard and select your namespace.
-
-2. 
 
 
 ## 3.2 Metrics
