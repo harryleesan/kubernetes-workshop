@@ -1,5 +1,38 @@
 # Kubernetes Workshop
 
+
+<!-- vim-markdown-toc GFM -->
+
+* [Preparation](#preparation)
+* [Reference](#reference)
+* [Lab 1: Getting to know the environment](#lab-1-getting-to-know-the-environment)
+  * [Creating your own namespace.](#creating-your-own-namespace)
+  * [1.1 Accessing the cluster](#11-accessing-the-cluster)
+    * [kubectl](#kubectl)
+  * [1.2 Accessing the dashboard.](#12-accessing-the-dashboard)
+* [Lab 2: Deploy your BookInfo application using Helm](#lab-2-deploy-your-bookinfo-application-using-helm)
+  * [What is Helm?](#what-is-helm)
+  * [2.1 Install Bookinfo the usual way (without Helm)](#21-install-bookinfo-the-usual-way-without-helm)
+    * [2.1.1 Deploy using the manifest](#211-deploy-using-the-manifest)
+    * [2.1.2 Check the status of the pods from the dashboard](#212-check-the-status-of-the-pods-from-the-dashboard)
+    * [2.1.3 Access your Bookinfo application](#213-access-your-bookinfo-application)
+    * [2.1.4 Upgrade Details to version 2](#214-upgrade-details-to-version-2)
+  * [2.2 Install Bookinfo with Helm](#22-install-bookinfo-with-helm)
+    * [2.2.1 Install tiller into your own namespace](#221-install-tiller-into-your-own-namespace)
+    * [2.2.2 Install Bookinfo as 4 services](#222-install-bookinfo-as-4-services)
+    * [2.2.3 Upgrade Reviews service to version 2](#223-upgrade-reviews-service-to-version-2)
+    * [2.2.4 Install Reviews service version 3 along side version 2](#224-install-reviews-service-version-3-along-side-version-2)
+* [Lab 3: Checking the application](#lab-3-checking-the-application)
+  * [What is Prometheus?](#what-is-prometheus)
+  * [3.1 Application Logs](#31-application-logs)
+  * [3.2 Metrics](#32-metrics)
+* [Lab 4: Trace with Jaegar](#lab-4-trace-with-jaegar)
+  * [What is Jaegar?](#what-is-jaegar)
+  * [4.1 Access Jaegar](#41-access-jaegar)
+* [Lab 5: Clean up](#lab-5-clean-up)
+
+<!-- vim-markdown-toc -->
+
 # Preparation
 
 The Kubernetes cluster should be created prior to this workshop with the following addons:
@@ -35,7 +68,7 @@ interference from others.
 ## Creating your own namespace.
 This should be created for you by the organiser prior to this workshop.
 
-## Accessing the cluster
+## 1.1 Accessing the cluster
 
 ### kubectl
 The interaction with the cluster is done through `kubectl`.
@@ -44,7 +77,7 @@ The interaction with the cluster is done through `kubectl`.
 
 2. Run `kubectl cluster-info` to check that you can access the cluster.
 
-## Accessing the dashboard.
+## 1.2 Accessing the dashboard.
 
 1. Run `kubectl config view`.
 
@@ -71,19 +104,9 @@ namespace. The BookInfo application is
 
 ## What is Helm?
 
-## Install tiller into your own namespace
+## 2.1 Install Bookinfo the usual way (without Helm)
 
-For more info on this approach: [Deploy Tiller in a namespace, restricted to deploying resources only in that namespace](https://docs.helm.sh/using_helm/#example-deploy-tiller-in-a-namespace-restricted-to-deploying-resources-only-in-that-namespace)
-
-```bash
-helm init --service-account tiller --tiller-namespace your_namespace
-```
-
-## Deploying the BookInfo application
-
-### Install Bookinfo the usual way (without Helm)
-
-#### Deploy using the manifest
+### 2.1.1 Deploy using the manifest
 
 Run the commands below from the `lab-2` directory.
 
@@ -101,7 +124,7 @@ Run the commands below from the `lab-2` directory.
     kubectl apply -f bookinfo.yml
     ```
 
-#### Check the status of the pods from the dashboard
+### 2.1.2 Check the status of the pods from the dashboard
 
 1. Run the proxy to the cluster
 
@@ -116,7 +139,7 @@ Run the commands below from the `lab-2` directory.
 
 4. Then check if the 4 services associated with the 4 pods are created correctly.
 
-#### Access your Bookinfo application
+### 2.1.3 Access your Bookinfo application
 
 1. Run the proxy to the cluster
 
@@ -132,7 +155,7 @@ Run the commands below from the `lab-2` directory.
 
 3. You should be able to see the Productpage.
 
-#### Upgrade Details to version 2
+### 2.1.4 Upgrade Details to version 2
 
 1. Replace the container image with version 2 on line 47 of `bookinfo.yml`
 
@@ -151,7 +174,17 @@ Run the commands below from the `lab-2` directory.
 
 3. Access the Productpage service to see the new version
 
-### Install Bookinfo as 4 services using helm
+## 2.2 Install Bookinfo with Helm
+
+### 2.2.1 Install tiller into your own namespace
+
+For more info on this approach: [Deploy Tiller in a namespace, restricted to deploying resources only in that namespace](https://docs.helm.sh/using_helm/#example-deploy-tiller-in-a-namespace-restricted-to-deploying-resources-only-in-that-namespace)
+
+```bash
+helm init --service-account tiller --tiller-namespace your_namespace
+```
+
+### 2.2.2 Install Bookinfo as 4 services
 
 Run the commands below from the `helm-charts` directory.
 
@@ -179,7 +212,7 @@ helm install ratings --namespace _your_namespace_ \
 ratings --debug
 ```
 
-### Upgrade Reviews service to version 2
+### 2.2.3 Upgrade Reviews service to version 2
 
 ```bash
 helm upgrade --namespace _your_namespace_ \
@@ -188,7 +221,7 @@ helm upgrade --namespace _your_namespace_ \
 reviews reviews --debug
 ```
 
-### Install Reviews service version 3 along side version 2
+### 2.2.4 Install Reviews service version 3 along side version 2
 
 ```bash
 helm install reviews-v3 --namespace _your_namespace_ \
@@ -196,12 +229,30 @@ helm install reviews-v3 --namespace _your_namespace_ \
 reviews --debug
 ```
 
-# Lab 3: Access the application
+# Lab 3: Checking the application
+Now your application is deployed. Let's see how it's doing.
+
+## What is Prometheus?
+
+## 3.1 Application Logs
+We can access the logs of pods from the Kubernetes dashboard.
+
+1. Access the dashboard and select your namespace.
+
+2. 
+
+
+## 3.2 Metrics
+The Bookinfo services have been instrumented with Prometheus.
 
 
 # Lab 4: Trace with Jaegar
 
+## What is Jaegar?
 Tracing to see how the applications are doing.
+
+## 4.1 Access Jaegar
+
 
 # Lab 5: Clean up
 
