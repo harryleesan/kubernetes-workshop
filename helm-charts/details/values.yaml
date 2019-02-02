@@ -5,16 +5,17 @@
 replicaCount: 1
 
 image:
-  repository: nginx
-  tag: stable
+  repository: istio/examples-bookinfo-details-v1
+  tag: 1.8.0
   pullPolicy: IfNotPresent
+  port: 9080
 
 nameOverride: ""
 fullnameOverride: ""
 
 service:
   type: ClusterIP
-  port: 80
+  port: 9080
 
 ingress:
   enabled: false

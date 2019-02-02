@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: istio/examples-bookinfo-reviews-v1
-  tag: stable
+  tag: 1.8.0
   pullPolicy: IfNotPresent
   port: 9080
 
