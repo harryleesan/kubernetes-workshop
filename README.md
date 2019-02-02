@@ -1,16 +1,14 @@
 # Kubernetes Workshop
 
-
 <!-- vim-markdown-toc GFM -->
 
-* [Preparation](#preparation)
-* [Reference](#reference)
-* [Lab 1: Getting to know the environment](#lab-1-getting-to-know-the-environment)
+  * [Preparation](#preparation)
+  * [Reference](#reference)
+* [Lab 1: Getting to know the environment [10 minutes]](#lab-1-getting-to-know-the-environment-10-minutes)
   * [Creating your own namespace.](#creating-your-own-namespace)
   * [1.1 Accessing the cluster](#11-accessing-the-cluster)
-    * [kubectl](#kubectl)
   * [1.2 Accessing the dashboard.](#12-accessing-the-dashboard)
-* [Lab 2: Deploy your BookInfo application using Helm](#lab-2-deploy-your-bookinfo-application-using-helm)
+* [Lab 2: Deploy your BookInfo application using Helm [30 minutes]](#lab-2-deploy-your-bookinfo-application-using-helm-45-minutes)
   * [What is Helm?](#what-is-helm)
   * [2.1 Install Bookinfo the usual way (without Helm)](#21-install-bookinfo-the-usual-way-without-helm)
     * [2.1.1 Deploy using the manifest](#211-deploy-using-the-manifest)
@@ -22,14 +20,14 @@
     * [2.2.2 Install Bookinfo as 4 services](#222-install-bookinfo-as-4-services)
     * [2.2.3 Upgrade Reviews service to version 2](#223-upgrade-reviews-service-to-version-2)
     * [2.2.4 Install Reviews service version 3 along side version 2](#224-install-reviews-service-version-3-along-side-version-2)
-* [Lab 3: Checking the application](#lab-3-checking-the-application)
+* [Lab 3: Checking the application [10 minutes]](#lab-3-checking-the-application-10-minutes)
   * [What is Prometheus?](#what-is-prometheus)
   * [3.1 Application Logs](#31-application-logs)
   * [3.2 Metrics](#32-metrics)
-* [Lab 4: Trace with Jaegar](#lab-4-trace-with-jaegar)
+* [Lab 4: Trace with Jaegar [10 minutes]](#lab-4-trace-with-jaegar-10-minutes)
   * [What is Jaegar?](#what-is-jaegar)
   * [4.1 Access Jaegar](#41-access-jaegar)
-* [Lab 5: Clean up](#lab-5-clean-up)
+* [Lab 5: Clean up [10 minutes]](#lab-5-clean-up-10-minutes)
 
 <!-- vim-markdown-toc -->
 
@@ -59,7 +57,7 @@ You should have the following installed on your local machine:
 - _your_namespace_ - The namespace that is created for you by the organiser for
   this workshop. Should be the same as your username.
 
-# Lab 1: Getting to know the environment
+# Lab 1: Getting to know the environment [10 minutes]
 
 Since everyone will be working in the same Kubernetes cluster, it is important
 that everyone works in their own namespace. This isolation prevents
@@ -70,7 +68,6 @@ This should be created for you by the organiser prior to this workshop.
 
 ## 1.1 Accessing the cluster
 
-### kubectl
 The interaction with the cluster is done through `kubectl`.
 
 1. Execute the provided script to enrol as a **service account**.
@@ -90,7 +87,7 @@ The interaction with the cluster is done through `kubectl`.
 5. Log in using the `token` method (paste the token that you retrieved from the
    first step).
 
-# Lab 2: Deploy your BookInfo application using Helm
+# Lab 2: Deploy your BookInfo application using Helm [30 minutes]
 
 [NOTE]
 Disclaimer:
@@ -225,7 +222,7 @@ helm install reviews-v3 --namespace _your_namespace_ \
 reviews --debug
 ```
 
-# Lab 3: Checking the application
+# Lab 3: Checking the application [10 minutes]
 Now your application is deployed. Let's see how it's doing.
 
 ## What is Prometheus?
@@ -240,7 +237,7 @@ We can access the logs of pods from the Kubernetes dashboard.
 The Bookinfo services have been instrumented with Prometheus.
 
 
-# Lab 4: Trace with Jaegar
+# Lab 4: Trace with Jaegar [10 minutes]
 
 ## What is Jaegar?
 Tracing to see how the applications are doing.
@@ -248,6 +245,6 @@ Tracing to see how the applications are doing.
 ## 4.1 Access Jaegar
 
 
-# Lab 5: Clean up
+# Lab 5: Clean up [10 minutes]
 
 Delete all created resources in your namespace.
