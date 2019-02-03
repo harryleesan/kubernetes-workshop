@@ -210,7 +210,6 @@ helm init --service-account tiller --tiller-namespace your_namespace
     helm --tiller-namespace your_namespace install \
     --namespace your_namespace \
     --name reviews \
-    --set fullnameOverride your_namespace-productpage
     --set service.enabled=true \
     reviews --debug
     ```
@@ -219,7 +218,6 @@ helm init --service-account tiller --tiller-namespace your_namespace
     helm --tiller-namespace your_namespace install \
     --namespace your_namespace \
     --name details \
-    --set fullnameOverride your_namespace-productpage
     --set service.enabled=true \
     details --debug
     ```
@@ -228,7 +226,6 @@ helm init --service-account tiller --tiller-namespace your_namespace
     helm --tiller-namespace your_namespace install \
     --namespace your_namespace \
     --name details \
-    --set fullnameOverride your_namespace-productpage
     --set service.enabled=true \
     ratings --debug
     ```
@@ -241,21 +238,47 @@ helm init --service-account tiller --tiller-namespace your_namespace
 
 
 ### 2.2.3 Upgrade Reviews service to version 2
+We have only a single version of Reviews exist, let's bump up to version
+2.
 
-```bash
-helm upgrade --namespace _your_namespace_ \
---set service.enabled=true \
---set image.repository=istio/examples-bookinfo-reviews-v2 \
-reviews reviews --debug
-```
+1. We have pushed a new image with a new version, let's upgrade our release.
 
-### 2.2.4 Install Reviews service version 3 along side version 2
+    ```bash
+    helm --tiller-namespace your_namespace upgrade \
+    --namespace your_namespace \
+    --set service.enabled=true \
+    --set image.repository=istio/examples-bookinfo-reviews-v2 \
+    reviews reviews --debug
+    ```
 
-```bash
-helm install reviews-v3 --namespace _your_namespace_ \
---set image.repository=istio/examples-bookinfo-reviews-v2 \
-reviews --debug
-```
+2. Check the Product page to now see stars under the Reviews section.
+
+### 2.2.4 Rollback Review service to version 1
+We realised that no one likes black stars for ratings! We have to revert back to
+version 1.
+
+1. Rollback to a previous version
+
+    ```bash
+    helm --tiller-namespace your_namespace rollback \
+    reviews 1 --debug
+    ```
+
+### 2.2.5 Install Reviews service version 3 along side version 1
+
+1. Install another helm release, but without a service since we are using the
+   same service as Reviews version 1.
+
+    ```bash
+    helm --tiller-namespace your_namespace install \
+    --namespace your_namespace \
+    --name reviews-v3 \
+    --set image.repository=istio/examples-bookinfo-reviews-v3 \
+    reviews --debug
+    ```
+
+2. Refresh Productpage a few times to see the Reviews section alternate between
+   version 1 and version 3.
 
 # Lab 3: Checking the application [10 minutes]
 Now your application is deployed. Let's see how it's doing.
