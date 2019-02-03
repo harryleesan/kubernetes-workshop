@@ -81,6 +81,7 @@ Kubernetes client installed on your local machine that makes API calls to the Ku
     ```
 
 2. Run `kubectl get all --namespace your_namespace` to verify that you can access the cluster.
+Don't worry, it's working if you see _No resources found_.
 
 ## 1.2 Accessing the dashboard
 The Kubernetes dashboard is a powerful tool which provides a GUI for you to
@@ -124,22 +125,21 @@ Application Tutorial](https://istio.io/docs/examples/bookinfo/).
 
 1. From the Kubernetes dashboard, navigate to your namespace and check if all 4 pods are running.
 
-2. Verify that the 4 services associated with the 4 pods are created correctly.
-   They should be named, _productpage_, _details_, _reviews_ and _ratings_.
+2. Verify that the 4 services associated with the 6 pods are created correctly.
+   They should be named, _productpage-v1_, _details-v1_, _reviews-v1_, _reviews-v2_, _reviews-v3_ and _ratings-v1_.
 
 ## 2.3 View the application Logs
 We can access the logs of pods from the Kubernetes dashboard.
 
-1. Access the dashboard and select your namespace.
-
-2. Select `pods` and view the logs of your pods.
+1. Select `pods` and view the logs of your pods. Productpage does not log to
+   _stdout, so you won't be able to view any logs for this pod.
 
 ## 2.4 Access your BookInfo application
 
 1. Access the Productpage service (ensure that the proxy is still running)
 
     ```bash
-    http://localhost:8001/api/v1/namespaces/your_namespace/services/productpage:9080/proxy/
+    http://localhost:8001/api/v1/namespaces/your_namespace/services/productpage:9080/proxy/productpage
     ```
 
 2. You should be able to see the Productpage.
@@ -238,6 +238,8 @@ For more info on this approach: [Deploy Tiller in a namespace, restricted to dep
 helm init --service-account tiller --tiller-namespace your_namespace
 ```
 
+Ensure tiller is running: `helm --tiller-namespace your_namespace list`
+
 ## 5.3 Install Bookinfo as 4 services
 
 1. Run the commands below from the `helm-charts` directory.
@@ -246,7 +248,6 @@ helm init --service-account tiller --tiller-namespace your_namespace
     helm --tiller-namespace your_namespace install \
     --namespace your_namespace \
     --name productpage \
-    --set fullnameOverride=your_namespace-productpage \
     --set service.enabled=true \
     productpage --debug
     ```
@@ -283,10 +284,10 @@ helm init --service-account tiller --tiller-namespace your_namespace
     helm --tiller-namespace your_namespace list
     ```
 
-2. Verify your Productpage service is running (ensure that `kubectl proxy` is running)
+2. Verify your Productpage service is running (ensure that `kubectl proxy` is still running)
 
     ```bash
-    http://localhost:8001/api/v1/namespaces/your_namespace/services/your_namespace-productpage:9080/proxy/
+    http://localhost:8001/api/v1/namespaces/your_namespace/services/productpage:9080/proxy/productpage
     ```
 
 ## 5.4 Upgrade Reviews service to version 2
@@ -309,7 +310,15 @@ We have only a single version of Reviews exist, let's bump up to version
 We realised that no one likes black stars for ratings! We have to revert back to
 version 1.
 
-1. Rollback to a previous version
+1. Have a look at the new revision for Reviews that you have created in 5.4
+
+    ```bash
+    helm --tiller-namespace your_namespace list
+    ```
+
+    - You should see two revisions for the `reviews` release.
+
+2. Rollback to a previous version
 
     ```bash
     helm --tiller-namespace your_namespace rollback \
@@ -333,6 +342,16 @@ version 1.
    version 1 and version 3.
 
 
-# Lab 6: Clean up [10 minutes]
+# Lab 6: Clean up [5 minutes]
 
 Delete all created resources in your namespace.
+
+## 6.1 Delete helm releases
+
+    ```bash
+    helm --tiller-namespace your_namespace delete productpage
+    helm --tiller-namespace your_namespace delete reviews
+    helm --tiller-namespace your_namespace delete reviews-v3
+    helm --tiller-namespace your_namespace delete details
+    helm --tiller-namespace your_namespace delete ratings
+    ```
