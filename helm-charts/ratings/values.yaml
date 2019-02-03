@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  reposetory: istio/examples-bookinfo-ratings-v1
+  repository: istio/examples-bookinfo-ratings-v1
   tag: 1.8.0
   pullPolicy: IfNotPresent
   port: 9080
@@ -29,6 +29,10 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+
+probes:
+  liveness: /ratings/0
+  readiness: /ratings/0
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious

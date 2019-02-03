@@ -72,7 +72,7 @@ The interaction with the cluster is done through `kubectl`.
 
 1. Execute the provided script to enrol as a **service account**.
 
-2. Run `kubectl cluster-info` to check that you can access the cluster.
+2. Run `kubectl get all --namespace your_namespace` to check that you can access the cluster.
 
 ## 1.2 Accessing the dashboard.
 
@@ -86,6 +86,8 @@ The interaction with the cluster is done through `kubectl`.
 
 5. Log in using the `token` method (paste the token that you retrieved from the
    first step).
+
+6. View resources in your `namespace` (_your_namespace_).
 
 # Lab 2: Deploy your BookInfo application using Helm [30 minutes]
 
@@ -165,7 +167,19 @@ Run the commands below from the `lab-2` directory.
     kubectl apply -f bookinfo.yml
     ```
 
-3. Access the Productpage service to see the new version
+3. From the dashboard, verify that the image for `details-v1` pod is updated.
+
+4. Access the Productpage service to see the new changes for the Details
+   service. You should see two new fields in the Details section.
+
+### 2.1.5 Clean up
+
+1. Delete the manifest
+
+    ```bash
+    kubectl delete -f bookinfo.yml
+    ```
+2. Verify that all deployments and services are deleted from the dashboard.
 
 ## 2.2 Install Bookinfo with Helm
 
@@ -179,31 +193,52 @@ helm init --service-account tiller --tiller-namespace your_namespace
 
 ### 2.2.2 Install Bookinfo as 4 services
 
-Run the commands below from the `helm-charts` directory.
+1. Run the commands below from the `helm-charts` directory.
 
-```bash
-helm install productpage --namespace _your_namespace_ \
---set service.enabled=true \
-productpage --debug
-```
+    ```bash
+    helm --tiller-namespace your_namespace install \
+    --namespace your_namespace \
+    --name productpage \
+    --set fullnameOverride=your_namespace-productpage
+    --set service.enabled=true \
+    productpage --debug
+    ```
 
-```bash
-helm install reviews --namespace _your_namespace_ \
---set service.enabled=true \
-reviews --debug
-```
+2. Now do the same for the other 3 services.
 
-```bash
-helm install details --namespace _your_namespace_ \
---set service.enabled=true \
-details --debug
-```
+    ```bash
+    helm --tiller-namespace your_namespace install \
+    --namespace your_namespace \
+    --name reviews \
+    --set fullnameOverride your_namespace-productpage
+    --set service.enabled=true \
+    reviews --debug
+    ```
 
-```bash
-helm install ratings --namespace _your_namespace_ \
---set service.enabled=true \
-ratings --debug
-```
+    ```bash
+    helm --tiller-namespace your_namespace install \
+    --namespace your_namespace \
+    --name details \
+    --set fullnameOverride your_namespace-productpage
+    --set service.enabled=true \
+    details --debug
+    ```
+
+    ```bash
+    helm --tiller-namespace your_namespace install \
+    --namespace your_namespace \
+    --name details \
+    --set fullnameOverride your_namespace-productpage
+    --set service.enabled=true \
+    ratings --debug
+    ```
+
+3. View the status of all 4 helm releases
+
+    ```bash
+    helm --tiller-namespace your_namespace list
+    ```
+
 
 ### 2.2.3 Upgrade Reviews service to version 2
 
