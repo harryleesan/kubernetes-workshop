@@ -54,11 +54,11 @@ You should have the following installed on your local machine:
 
 ## Reference
 
-- _username_ - The user that is created for you by the organiser for this
-  workshop. Should be your first name appended with the first letter of your
+- _username_ - The user that is created for you by the organiser of this
+  workshop. This should be your first name appended with the first letter of your
   last name.
 - _your_namespace_ - The namespace that is created for you by the organiser for
-  this workshop. Should be the same as your username.
+  this workshop. This should be the same as your username.
 
 # Lab 1: Getting to know the environment [5 minutes]
 
@@ -70,41 +70,47 @@ interference from others.
 This should be created for you by the organiser prior to this workshop.
 
 ## 1.1 Accessing the cluster
+The interaction with the cluster is done through `kubectl`. This is the
+Kubernetes client installed on your local machine that makes API calls to the Kubernetes cluster.
 
-The interaction with the cluster is done through `kubectl`.
+1. Execute the provided script to enroll as a **service account**.
 
-1. Execute the provided script to enrol as a **service account**.
+    ```bash
+    chmod +x username-enroll.sh
+    ./username-enroll.sh <token>
+    ```
 
-2. Run `kubectl get all --namespace your_namespace` to check that you can access the cluster.
+2. Run `kubectl get all --namespace your_namespace` to verify that you can access the cluster.
 
 ## 1.2 Accessing the dashboard
+The Kubernetes dashboard is a powerful tool which provides a GUI for you to
+visualise the internal workings of the Kubernetes cluster.
 
 1. Run `kubectl config view`.
 
-2. Copy the token.
+2. Copy the _token_.
 
 3. Run `kubectl proxy`, do not close the terminal.
 
-4. Open your web browser and navigate to: [http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/)
+4. Open your web browser and navigate to: [http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/).
 
-5. Log in using the `token` method (paste the token that you retrieved from the
-   first step).
+5. Log in using the `token` method (paste the token that you retrieved from 
+   step 2).
 
-6. View resources in your `namespace` (_your_namespace_).
+6. Now you can view resources in your `namespace`.
 
 # Lab 2: Deploy your BookInfo application [10 minutes]
 [NOTE]
-Disclaimer:
-The code for this lab is taken from [Istio's BookInfo
+Disclaimer: The code for this lab is taken from [Istio's BookInfo
 Application Tutorial](https://istio.io/docs/examples/bookinfo/).
 
 ## 2.1 Deploy using the manifest (without Helm)
 
-1. Replace the `namespace` in the _Deployment_ and _Service_ resources in
-   `bookinfo.yml`
-   to use _your_namespace_.
+1. Replace all occurrence of `namespace` in the _Deployment_ and _Service_ resources in
+   `bookinfo.yml` with _your_namespace_.
 
     ```yaml
+    # replace namespace: 111 with
     namespace: your_namespace
     ```
 
@@ -116,39 +122,27 @@ Application Tutorial](https://istio.io/docs/examples/bookinfo/).
 
 ## 2.2 Check the status of the pods from the dashboard
 
-1. Run the proxy to the cluster
+1. From the Kubernetes dashboard, navigate to your namespace and check if all 4 pods are running.
 
-    ```bash
-    kubectl proxy
-    ```
-2. Access the dashboard: [http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/)
+2. Verify that the 4 services associated with the 4 pods are created correctly.
+   They should be named, _productpage_, _details_, _reviews_ and _ratings_.
 
-3. Navigate to your namespace and check if all 4 pods are running.
-
-4. Then check if the 4 services associated with the 4 pods are created correctly.
-
-## 2.3 View Application Logs
+## 2.3 View the application Logs
 We can access the logs of pods from the Kubernetes dashboard.
 
 1. Access the dashboard and select your namespace.
 
 2. Select `pods` and view the logs of your pods.
 
-## 2.4 Access your Bookinfo application
+## 2.4 Access your BookInfo application
 
-1. Run the proxy to the cluster
-
-    ```bash
-    kubectl proxy
-    ```
-
-2. Access the Productpage service
+1. Access the Productpage service (ensure that the proxy is still running)
 
     ```bash
     http://localhost:8001/api/v1/namespaces/your_namespace/services/productpage:9080/proxy/
     ```
 
-3. You should be able to see the Productpage.
+2. You should be able to see the Productpage.
 
 ## 2.5 Upgrade Details to version 2
 
@@ -167,7 +161,7 @@ We can access the logs of pods from the Kubernetes dashboard.
     kubectl apply -f bookinfo.yml
     ```
 
-3. From the dashboard, verify that the image for `details-v1` pod is updated.
+3. From the Kubernetes dashboard, verify that the image for `details-v1` pod is updated.
 
 4. Access the Productpage service to see the new changes for the Details
    service. You should see two new fields in the Details section.
@@ -179,10 +173,10 @@ Now your application is deployed. Let's see how it's doing.
 ## What is Prometheus?
 
 ## 3.1 Container Metrics
-The Kubernetes cluster exposes native metrics in the Prometheus format. We can view the
+The Kubernetes cluster natively exposes metrics in the Prometheus format. We can view the
 metrics using Grafana.
 
-1. Accessing Grafana through port forward.
+1. Accessing Grafana through port forwarding.
 
     ```bash
     kubectl -n monitoring port-forward svc/grafana 3000
@@ -191,7 +185,7 @@ metrics using Grafana.
 2. Login using username: `user` password: `user`.
 
 3. Click **Home** on the top left. You should see a list of dashboards. You can
-   go explore what each dashboard shows.
+   now go and explore what each dashboard does.
 
 # Lab 4: Trace with Jaeger [5 minutes]
 
