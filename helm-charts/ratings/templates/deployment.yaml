@@ -18,6 +18,8 @@ spec:
       labels:
         app.kubernetes.io/name: {{ include "ratings.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
+        app: {{ include "ratings.name" . }}
+        version: {{ .Values.image.version }}
     spec:
       containers:
         - name: {{ .Chart.Name }}
@@ -26,7 +28,6 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.image.port }}
-              protocol: TCP
           livenessProbe:
             httpGet:
               path: "{{ .Values.probes.liveness }}"

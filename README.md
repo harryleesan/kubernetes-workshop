@@ -89,6 +89,14 @@ The interaction with the cluster is done through `kubectl`.
 
 6. View resources in your `namespace` (_your_namespace_).
 
+## 1.2 View Application Logs
+We can access the logs of pods from the Kubernetes dashboard.
+
+1. Access the dashboard and select your namespace.
+
+2. Select `pods` and view the logs of your pods.
+
+
 # Lab 2: Deploy your BookInfo application using Helm [30 minutes]
 
 [NOTE]
@@ -280,27 +288,45 @@ version 1.
 2. Refresh Productpage a few times to see the Reviews section alternate between
    version 1 and version 3.
 
-# Lab 3: Checking the application [10 minutes]
+# Lab 3: Metrics with Prometheus [10 minutes]
 Now your application is deployed. Let's see how it's doing.
 
 ## What is Prometheus?
 
-## 3.1 Application Logs
-We can access the logs of pods from the Kubernetes dashboard.
+## 3.2 Container Metrics
+The Kubernetes cluster exposes native metrics in the Prometheus format. We can view the
+metrics using Grafana.
 
-1. Access the dashboard and select your namespace.
+1. Accessing Grafana through port forward.
 
+    ```bash
+    kubectl -n monitoring port-forward svc/grafana 3000
+    ```
 
-## 3.2 Metrics
-The Bookinfo services have been instrumented with Prometheus.
+2. Login using username: `user` password: `user`.
 
+3. Click **Home** on the top left. You should see a list of dashboards. You can
+   go explore what each dashboard shows.
 
 # Lab 4: Trace with Jaegar [10 minutes]
+
+## What is Istio?
+
+## 4.1 Enable Istio
+
+1. Istio needs to be enabled for your namespace. Please ask any member of the workshop
+committee to enable Istio for you.
+
+2. After you have confirmation that Istio has been enabled for your namespace,
+   head over to your Kubernetes dashboard and delete all the pods.
+
+3. Your pods (4 Bookinfo services) will start up again. This time, you will see
+   every pod now has an `istio-proxy` sidecar container.
 
 ## What is Jaegar?
 Tracing to see how the applications are doing.
 
-## 4.1 Access Jaegar
+## 4.2 Access Jaegar
 
 
 # Lab 5: Clean up [10 minutes]
