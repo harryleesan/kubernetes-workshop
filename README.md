@@ -13,9 +13,11 @@
   * [2.2 Check the status of the pods from the dashboard](#22-check-the-status-of-the-pods-from-the-dashboard)
   * [2.3 View the application logs](#23-view-the-application-logs)
   * [2.4 Access your BookInfo application](#24-access-your-bookinfo-application)
-  * [2.5 Upgrade Details to version 2](#25-upgrade-details-to-version-2)
+  * [2.5 Update Details to version 2](#25-update-details-to-version-2)
+  * [2.6 Deploying reviews-v2 and reviews-v3 alongside reviews-v1](#26-deploying-reviews-v2-and-reviews-v3-alongside-reviews-v1)
 * [Lab 3: Cluster metrics with Prometheus [5 minutes]](#lab-3-cluster-metrics-with-prometheus-5-minutes)
   * [3.1 Cluster Metrics](#31-cluster-metrics)
+    * [Advanced](#advanced)
 * [Lab 4: Trace with Jaeger [5 minutes]](#lab-4-trace-with-jaeger-5-minutes)
   * [4.1 Enable Istio](#41-enable-istio)
   * [4.2 Access Jaeger](#42-access-jaeger)
@@ -26,9 +28,11 @@
   * [5.4 Upgrade Reviews service to version 2](#54-upgrade-reviews-service-to-version-2)
   * [5.5 Rollback Review service to version 1](#55-rollback-review-service-to-version-1)
   * [5.6 Install Reviews service version 3 alongside version 1](#56-install-reviews-service-version-3-alongside-version-1)
+    * [Advanced](#advanced-1)
 * [Lab 6: Assign a hostname to BookInfo [5 minutes]](#lab-6-assign-a-hostname-to-bookinfo-5-minutes)
   * [6.1 Installing Istio's VirtualService](#61-installing-istios-virtualservice)
-* [Lab 7: Clean up [5 minutes]](#lab-7-cleani-up-5-minutes)
+    * [Advanced](#advanced-2)
+* [Lab 7: Clean up [5 minutes]](#lab-7-clean-up-5-minutes)
   * [7.1 Delete the helm releases](#71-delete-the-helm-releases)
 
 <!-- vim-markdown-toc -->
@@ -161,7 +165,7 @@ in action.
 2. Voila, You should be able to see your Productpage with a details section
    (Details service) and reviews section (Reviews service).
 
-## 2.5 Upgrade Details to version 2
+## 2.5 Update Details to version 2
 
 So we realised that the information displayed in the details section is missing
 a Publisher field. We quickly made the changes to the Details service, build the
@@ -187,6 +191,24 @@ docker image and pushed. Now let's see how we can swap out the old version.
 4. Access the Productpage service to see the new changes for the Details
    service. You should now see two new fields in the details section.
 
+## 2.6 Deploying reviews-v2 and reviews-v3 alongside reviews-v1
+
+You can route traffic between multiple pods by attaching them to a single
+service.
+
+1. You will notice that under **Reviews service** in `bookinfo.yml`, there are
+   two deployments (v2 and v3) that are commented out. Remove the comments and
+   apply the manifest file again.
+
+   ```bash
+   # After you have uncommented the two reviews deployments
+   kubctl apply -f bookinfo.yml
+   ```
+
+2. Refresh Productpage in your web browser. You will see that each time you
+   refresh, the reviews section is different (no stars, black stars and red
+   stars.)
+
 # Lab 3: Cluster metrics with Prometheus [5 minutes]
 
 Now your application is deployed. Let's see how it's doing from the cluster's
@@ -207,6 +229,15 @@ metrics through Grafana.
 
 3. Click **Home** on the top left. You should see a list of dashboards. You can
    now go and explore what each dashboard does.
+
+### Advanced
+
+Prometheus can also be integrated with your application to expose any type of
+metrics you want. This requires you to instrument your code
+(this part does not come for free). The source code for the 4 microservices can
+be found at [Bookinfo Sample](https://github.com/istio/istio/tree/master/samples/bookinfo).
+You can look at how you can instrument the code at [Prometheus Client
+Libraries](https://prometheus.io/docs/instrumenting/clientlibs/).
 
 # Lab 4: Trace with Jaeger [5 minutes]
 
@@ -357,6 +388,10 @@ version 1.
 
 ## 5.6 Install Reviews service version 3 alongside version 1
 
+Let's try using stars for ratings again. This time, we will use red stars instead
+of black stars. Let's deploy version 3 with version 1 so that we can do some A/B
+testing.
+
 1. Install another helm release, but without enabling an extra _service_ since we are using the
    same service as Reviews version 1.
 
@@ -370,6 +405,12 @@ version 1.
 
 2. Refresh Productpage a few times to see the Reviews section alternate between
    version 1 and version 3.
+
+### Advanced
+
+Istio has advanced traffic management which includes [Traffic Shifting](https://istio.io/docs/tasks/traffic-management/traffic-shifting/).
+This is particularly useful if you want to do canary or A/B testing on your
+application. After you have completed Lab 6 you can experiment with this.
 
 # Lab 6: Assign a hostname to BookInfo [5 minutes]
 
@@ -389,6 +430,8 @@ The Gateway is integrated with [cert-manager](https://github.com/jetstack/cert-m
 which provides a wild card certificate for our domain (*.library.yun.technology)
 via LetsEncrypt.
 
+Let's install a [Virtual Service](https://istio.io/docs/reference/config/istio.networking.v1alpha3/#VirtualService) for BookInfo.
+
 1. Replace all occurrence of _your_namespace_ in `bookinfo-virtualservice.yml`
    with your namespace.
 
@@ -400,6 +443,11 @@ via LetsEncrypt.
 
 3. Access your Productpage service at
    `https://your_namespace.library.yun.technology/productpage`
+
+### Advanced
+
+You can explore the different routing methods/strategies that virtualservice
+enables you to do with your application such as [Traffic Shifting](https://istio.io/docs/tasks/traffic-management/traffic-shifting/).
 
 # Lab 7: Clean up [5 minutes]
 
