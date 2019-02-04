@@ -90,7 +90,7 @@ Kubernetes client installed on your local machine that interacts with the Kubern
     ./enroll.sh <token>
     ```
 
-    * Your namespace/user name and <token> will be emailed to the email address
+    * Your namespace/user name and \<token\> will be emailed to the email address
       that you entered in the Workshop Register.
 
 2. Run `kubectl get all --namespace your_namespace` to verify that you can access the cluster.
