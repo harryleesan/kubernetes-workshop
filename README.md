@@ -5,32 +5,29 @@
   * [Preparation](#preparation)
   * [Reference](#reference)
 * [Lab 1: Getting to know the environment [5 minutes]](#lab-1-getting-to-know-the-environment-5-minutes)
-  * [Creating your own namespace.](#creating-your-own-namespace)
+  * [Accessing the Kubernetes cluster](#accessing-the-kubernetes-cluster)
   * [1.1 Accessing the cluster](#11-accessing-the-cluster)
   * [1.2 Accessing the dashboard](#12-accessing-the-dashboard)
 * [Lab 2: Deploy your BookInfo application [10 minutes]](#lab-2-deploy-your-bookinfo-application-10-minutes)
   * [2.1 Deploy using the manifest (without Helm)](#21-deploy-using-the-manifest-without-helm)
   * [2.2 Check the status of the pods from the dashboard](#22-check-the-status-of-the-pods-from-the-dashboard)
-  * [2.3 View Application Logs](#23-view-application-logs)
-  * [2.4 Access your Bookinfo application](#24-access-your-bookinfo-application)
+  * [2.3 View the application logs](#23-view-the-application-logs)
+  * [2.4 Access your BookInfo application](#24-access-your-bookinfo-application)
   * [2.5 Upgrade Details to version 2](#25-upgrade-details-to-version-2)
-* [Lab 3: Metrics with Prometheus [5 minutes]](#lab-3-metrics-with-prometheus-5-minutes)
-  * [What is Prometheus?](#what-is-prometheus)
-  * [3.1 Container Metrics](#31-container-metrics)
+* [Lab 3: Cluster metrics with Prometheus [5 minutes]](#lab-3-cluster-metrics-with-prometheus-5-minutes)
+  * [3.1 Cluster Metrics](#31-cluster-metrics)
 * [Lab 4: Trace with Jaeger [5 minutes]](#lab-4-trace-with-jaeger-5-minutes)
-  * [What is Istio?](#what-is-istio)
-  * [What is Jaeger?](#what-is-jaeger)
   * [4.1 Enable Istio](#41-enable-istio)
   * [4.2 Access Jaeger](#42-access-jaeger)
-* [Lab 5: Deploy your BookInfo application using Helm [30 minutes]](#lab-5-deploy-your-bookinfo-application-using-helm-30-minutes)
-  * [What is Helm?](#what-is-helm)
+* [Lab 5: Deploy BookInfo using Helm [30 minutes]](#lab-5-deploy-bookinfo-using-helm-30-minutes)
   * [5.1 Clean up your BookInfo services](#51-clean-up-your-bookinfo-services)
   * [5.2 Install tiller into your own namespace](#52-install-tiller-into-your-own-namespace)
-  * [5.3 Install Bookinfo as 4 services](#53-install-bookinfo-as-4-services)
+  * [5.3 Install BookInfo using 4 helm charts](#53-install-bookinfo-using-4-helm-charts)
   * [5.4 Upgrade Reviews service to version 2](#54-upgrade-reviews-service-to-version-2)
   * [5.5 Rollback Review service to version 1](#55-rollback-review-service-to-version-1)
-  * [5.6 Install Reviews service version 3 along side version 1](#56-install-reviews-service-version-3-along-side-version-1)
-* [Lab 6: Clean up [10 minutes]](#lab-6-clean-up-10-minutes)
+  * [5.6 Install Reviews service version 3 alongside version 1](#56-install-reviews-service-version-3-alongside-version-1)
+* [Lab 6: Clean up [5 minutes]](#lab-6-clean-up-5-minutes)
+  * [6.1 Delete the helm releases](#61-delete-the-helm-releases)
 
 <!-- vim-markdown-toc -->
 
@@ -134,7 +131,7 @@ cluster. Let's see how they are doing.
 2. Verify that the 4 services associated with the 6 pods are created correctly.
    They should be named, _productpage-v1_, _details-v1_, _reviews-v1_, _reviews-v2_, _reviews-v3_ and _ratings-v1_.
 
-## 2.3 View the application Logs
+## 2.3 View the application logs
 We can access the logs of the pods from the Kubernetes dashboard.
 
 1. Select `pods` and view the logs of your pods (try and find where they are). Productpage does not log to
@@ -261,7 +258,7 @@ For more info on this approach: [Deploy Tiller in a namespace, restricted to dep
     helm --tiller-namespace your_namespace list
     ```
 
-## 5.3 Install Bookinfo using 4 helm charts
+## 5.3 Install BookInfo using 4 helm charts
 
 1. Run the commands below from the `helm-charts` directory.
 
