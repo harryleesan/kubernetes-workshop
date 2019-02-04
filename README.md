@@ -26,8 +26,10 @@
   * [5.4 Upgrade Reviews service to version 2](#54-upgrade-reviews-service-to-version-2)
   * [5.5 Rollback Review service to version 1](#55-rollback-review-service-to-version-1)
   * [5.6 Install Reviews service version 3 alongside version 1](#56-install-reviews-service-version-3-alongside-version-1)
-* [Lab 6: Clean up [5 minutes]](#lab-6-clean-up-5-minutes)
-  * [6.1 Delete the helm releases](#61-delete-the-helm-releases)
+* [Lab 6: Assign a hostname to BookInfo [5 minutes]](#lab-6-assign-a-hostname-to-bookinfo-5-minutes)
+  * [6.1 Installing Istio's VirtualService](#61-installing-istios-virtualservice)
+* [Lab 7: Clean up [5 minutes]](#lab-7-cleani-up-5-minutes)
+  * [7.1 Delete the helm releases](#71-delete-the-helm-releases)
 
 <!-- vim-markdown-toc -->
 
@@ -369,11 +371,41 @@ version 1.
 2. Refresh Productpage a few times to see the Reviews section alternate between
    version 1 and version 3.
 
-# Lab 6: Clean up [5 minutes]
+# Lab 6: Assign a hostname to BookInfo [5 minutes]
 
-Delete all created resources in your namespace.
+We can access our BookInfo via `kubectl proxy`. But surely this is not how our
+users will access our application! Let's create an URL for our BookInfo.
 
-## 6.1 Delete the helm releases
+## 6.1 Installing Istio's VirtualService
+
+Istio has its own _gateway_ and _virtualservice_ custom resources that we can
+use to create a public facing endpoint. [Configuring ingress using an Istio Gateway](https://istio.io/docs/tasks/traffic-management/ingress/#configuring-ingress-using-an-istio-gateway)
+
+A Gateway has been created for you in the `default` namespace. For the sake of
+simplicity and ease of management, you will deploy your own virtualservice to
+the `default` namespace as well.
+
+The Gateway is integrated with [cert-manager](https://github.com/jetstack/cert-manager)
+which provides a wild card certificate for our domain (*.library.yun.technology)
+via LetsEncrypt.
+
+1. Replace all occurrence of _your_namespace_ in `bookinfo-virtualservice.yml`
+   with your namespace.
+
+2. Apply the manifest and wait about 3 minutes.
+
+    ```bash
+    kubectl apply -f bookinfo-virtualservice.yml
+    ```
+
+3. Access your Productpage service at
+   `https://your_namespace.library.yun.technology/productpage`
+
+# Lab 7: Clean up [5 minutes]
+
+Delete all resources that you have created in your namespace.
+
+## 7.1 Delete the helm releases
 
   ```bash
   helm --tiller-namespace your_namespace delete productpage
