@@ -35,25 +35,25 @@
 
 The Kubernetes cluster should be created prior to this workshop with the following addons:
 
-- Kubernetes Dashboard
-- Prometheus + Grafana (through `prometheus-operator`)
-- Istio + Jaeger
+* Kubernetes Dashboard
+* Prometheus + Grafana (through `prometheus-operator`)
+* Istio + Jaeger
 
 You should have the following installed on your local machine:
 
-- `bash`
+* `bash`
   * Any shell/terminal that has `bash`, since there will be some bash
     scripts that need to be run.
-- `kubectl`
+* `kubectl`
   * Ensure that `kubectl` is in the $PATH of `bash`.
-- `helm`
+* `helm`
 
 ## Reference
 
-- _username_ - The user that is created for you by the organiser of this
+* _username_ - The user that is created for you by the organiser of this
   workshop. This should be your first name appended with the first letter of your
   last name.
-- _your_namespace_ - The namespace that is created for you by the organiser for
+* _your_namespace_ - The namespace that is created for you by the organiser for
   this workshop. This should be the same as your username.
 
 # Lab 1: Getting to know the environment [5 minutes]
@@ -62,9 +62,11 @@ Since everyone will be working in the same Kubernetes cluster, it is important
 that everyone works in their own namespace without interfering others.
 
 ## Accessing the Kubernetes cluster
+
 Your **namespace** should have been created for you by the organiser prior the workshop.
 
 ## 1.1 Accessing the cluster
+
 The interaction with the cluster is done through `kubectl`. This is the
 Kubernetes client installed on your local machine that interacts with the Kubernetes cluster.
 
@@ -80,6 +82,7 @@ Kubernetes client installed on your local machine that interacts with the Kubern
    Don't worry, it's working if you see _No resources found_.
 
 ## 1.2 Accessing the dashboard
+
 The Kubernetes dashboard is a powerful tool which provides a GUI for you to
 visualise the internal workings of the Kubernetes cluster.
 
@@ -97,6 +100,7 @@ visualise the internal workings of the Kubernetes cluster.
 6. Now you can view resources in your `namespace`.
 
 # Lab 2: Deploy your BookInfo application [10 minutes]
+
 Disclaimer: The code for this lab is taken from [Istio's BookInfo
 Application Tutorial](https://istio.io/docs/examples/bookinfo/).
 
@@ -123,6 +127,7 @@ cluster.
     ```
 
 ## 2.2 Check the status of the pods from the dashboard
+
 We have just deployed our BookInfo application (as 4 separate services) into our
 cluster. Let's see how they are doing.
 
@@ -132,12 +137,14 @@ cluster. Let's see how they are doing.
    They should be named, _productpage-v1_, _details-v1_, _reviews-v1_, _reviews-v2_, _reviews-v3_ and _ratings-v1_.
 
 ## 2.3 View the application logs
+
 We can access the logs of the pods from the Kubernetes dashboard.
 
 1. Select `pods` and view the logs of your pods (try and find where they are). Productpage does not log to
-   _stdout, so you won't be able to view any logs for this pod.
+   _stdout_, so you won't be able to view any logs for this pod.
 
 ## 2.4 Access your BookInfo application
+
 Now our services and pods are running fine. Let's access Productpage and see it
 in action.
 
@@ -147,12 +154,13 @@ in action.
     http://localhost:8001/api/v1/namespaces/your_namespace/services/productpage:9080/proxy/productpage
     ```
 
-    - Replace _your_namespace_
+    * Replace _your_namespace_
 
 2. Voila, You should be able to see your Productpage with a details section
    (Details service) and reviews section (Reviews service).
 
 ## 2.5 Upgrade Details to version 2
+
 So we realised that the information displayed in the details section is missing
 a Publisher field. We quickly made the changes to the Details service, build the
 docker image and pushed. Now let's see how we can swap out the old version.
@@ -178,10 +186,12 @@ docker image and pushed. Now let's see how we can swap out the old version.
    service. You should now see two new fields in the details section.
 
 # Lab 3: Cluster metrics with Prometheus [5 minutes]
+
 Now your application is deployed. Let's see how it's doing from the cluster's
 perspective.
 
 ## 3.1 Cluster Metrics
+
 The Kubernetes cluster natively exposes metrics in the Prometheus format. We can view the
 metrics through Grafana.
 
@@ -197,6 +207,7 @@ metrics through Grafana.
    now go and explore what each dashboard does.
 
 # Lab 4: Trace with Jaeger [5 minutes]
+
 Let's take a look at how a request to Productpage triggers a chain of events to the other 3 services.
 We can do this through tracing with Jaeger (integrated with Istio).
 
@@ -305,6 +316,7 @@ For more info on this approach: [Deploy Tiller in a namespace, restricted to dep
 2. Verify that your Productpage services is running from the Kubernetes Dashboard
 
 ## 5.4 Upgrade Reviews service to version 2
+
 You will notice that we only have reviews-v1 deployed as a helm release. We have
 just added a new feature to display ratings as black stars as part of the
 Reviews service (reviews-v2). Let's upgrade our Reviews service to version 2.
@@ -322,6 +334,7 @@ Reviews service (reviews-v2). Let's upgrade our Reviews service to version 2.
 2. Check Productpage to see black stars under the Reviews section.
 
 ## 5.5 Rollback Review service to version 1
+
 We realised that no one likes black stars for ratings! We have to revert back to
 version 1.
 
@@ -331,7 +344,7 @@ version 1.
     helm --tiller-namespace your_namespace list
     ```
 
-    - You should see two revisions for the `reviews` release.
+    * You should see two revisions for the `reviews` release.
 
 2. Rollback to a previous version
 
