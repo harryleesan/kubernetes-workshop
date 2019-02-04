@@ -38,10 +38,9 @@
 
 The Kubernetes cluster should be created prior to this workshop with the following addons:
 
-- Helm (with a tiller pod)
-- Kubernetes dashboard
+- Kubernetes Dashboard
 - Prometheus + Grafana (through `prometheus-operator`)
-- Istio
+- Istio + Jaeger
 
 You should have the following installed on your local machine:
 
@@ -63,17 +62,17 @@ You should have the following installed on your local machine:
 # Lab 1: Getting to know the environment [5 minutes]
 
 Since everyone will be working in the same Kubernetes cluster, it is important
-that everyone works in their own namespace. This isolation prevents
-interference from others.
+that everyone works in their own namespace without interfering others.
 
-## Creating your own namespace.
-This should be created for you by the organiser prior to this workshop.
+## Accessing the Kubernetes cluster
+Your **namespace** should have been created for you by the organiser prior the workshop.
 
 ## 1.1 Accessing the cluster
 The interaction with the cluster is done through `kubectl`. This is the
-Kubernetes client installed on your local machine that makes API calls to the Kubernetes cluster.
+Kubernetes client installed on your local machine that interacts with the Kubernetes cluster.
 
-1. Execute the provided script to enroll as a **service account**.
+1. A _bash_ script is sent to you at the beginning of the workshop. Execute the provided script to
+   enroll as a **service account**.
 
     ```bash
     chmod +x username-enroll.sh
@@ -81,7 +80,7 @@ Kubernetes client installed on your local machine that makes API calls to the Ku
     ```
 
 2. Run `kubectl get all --namespace your_namespace` to verify that you can access the cluster.
-Don't worry, it's working if you see _No resources found_.
+   Don't worry, it's working if you see _No resources found_.
 
 ## 1.2 Accessing the dashboard
 The Kubernetes dashboard is a powerful tool which provides a GUI for you to
@@ -91,50 +90,59 @@ visualise the internal workings of the Kubernetes cluster.
 
 2. Copy the _token_.
 
-3. Run `kubectl proxy`, do not close the terminal.
+3. Run `kubectl proxy`, leave it running and do not close the terminal.
 
 4. Open your web browser and navigate to: [http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/](http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:https/proxy/).
 
-5. Log in using the `token` method (paste the token that you retrieved from 
+5. Log in using the `token` method (paste the token that you retrieved from
    step 2).
 
 6. Now you can view resources in your `namespace`.
 
 # Lab 2: Deploy your BookInfo application [10 minutes]
-[NOTE]
 Disclaimer: The code for this lab is taken from [Istio's BookInfo
 Application Tutorial](https://istio.io/docs/examples/bookinfo/).
 
+We have a BookInfo application that is composed of 4 microservices. They have
+been "dockerised" and the docker images are stored on Docker Hub (public
+repository). Let's see how we can deploy these 4 services into our Kubernetes
+cluster.
+
 ## 2.1 Deploy using the manifest (without Helm)
 
-1. Replace all occurrence of `namespace` in the _Deployment_ and _Service_ resources in
+1. Replace all `namespace` in the _Deployment_ and _Service_ resources in
    `bookinfo.yml` with _your_namespace_.
 
     ```yaml
-    # replace namespace: 111 with
-    namespace: your_namespace
+    # replace namespace: your_namespace with the namespace that is assigned to you.
+    # e.g.
+    namespace: harryl
     ```
 
-2. Deploy Bookinfo into your namespace
+2. Deploy the 4 services of BookInfo into your namespace
 
     ```bash
     kubectl apply -f bookinfo.yml
     ```
 
 ## 2.2 Check the status of the pods from the dashboard
+We have just deployed our BookInfo application (as 4 separate services) into our
+cluster. Let's see how they are doing.
 
-1. From the Kubernetes dashboard, navigate to your namespace and check if all 4 pods are running.
+1. From the Kubernetes dashboard, navigate to your namespace.
 
 2. Verify that the 4 services associated with the 6 pods are created correctly.
    They should be named, _productpage-v1_, _details-v1_, _reviews-v1_, _reviews-v2_, _reviews-v3_ and _ratings-v1_.
 
 ## 2.3 View the application Logs
-We can access the logs of pods from the Kubernetes dashboard.
+We can access the logs of the pods from the Kubernetes dashboard.
 
-1. Select `pods` and view the logs of your pods. Productpage does not log to
+1. Select `pods` and view the logs of your pods (try and find where they are). Productpage does not log to
    _stdout, so you won't be able to view any logs for this pod.
 
 ## 2.4 Access your BookInfo application
+Now our services and pods are running fine. Let's access Productpage and see it
+in action.
 
 1. Access the Productpage service (ensure that the proxy is still running)
 
@@ -142,9 +150,15 @@ We can access the logs of pods from the Kubernetes dashboard.
     http://localhost:8001/api/v1/namespaces/your_namespace/services/productpage:9080/proxy/productpage
     ```
 
-2. You should be able to see the Productpage.
+    - Replace _your_namespace_
+
+2. Voila, You should be able to see your Productpage with a details section
+   (Details service) and reviews section (Reviews service).
 
 ## 2.5 Upgrade Details to version 2
+So we realised that the information displayed in the details section is missing
+a Publisher field. We quickly made the changes to the Details service, build the
+docker image and pushed. Now let's see how we can swap out the old version.
 
 1. Replace the container image with version 2 on line 47 of `bookinfo.yml`
 
@@ -161,20 +175,18 @@ We can access the logs of pods from the Kubernetes dashboard.
     kubectl apply -f bookinfo.yml
     ```
 
-3. From the Kubernetes dashboard, verify that the image for `details-v1` pod is updated.
+3. From the Kubernetes Dashboard, verify that the image for `details-v1` pod is updated.
 
 4. Access the Productpage service to see the new changes for the Details
-   service. You should see two new fields in the Details section.
+   service. You should now see two new fields in the details section.
 
+# Lab 3: Cluster metrics with Prometheus [5 minutes]
+Now your application is deployed. Let's see how it's doing from the cluster
+perspective.
 
-# Lab 3: Metrics with Prometheus [5 minutes]
-Now your application is deployed. Let's see how it's doing.
-
-## What is Prometheus?
-
-## 3.1 Container Metrics
+## 3.1 Cluster Metrics
 The Kubernetes cluster natively exposes metrics in the Prometheus format. We can view the
-metrics using Grafana.
+metrics through Grafana.
 
 1. Accessing Grafana through port forwarding.
 
@@ -182,12 +194,13 @@ metrics using Grafana.
     kubectl -n monitoring port-forward svc/grafana 3000
     ```
 
-2. Login using username: `user` password: `user`.
+2. Login with username: `user` password: `user`.
 
 3. Click **Home** on the top left. You should see a list of dashboards. You can
    now go and explore what each dashboard does.
 
 # Lab 4: Trace with Jaeger [5 minutes]
+So we have these 4 microservices 
 
 ## What is Istio?
 ## What is Jaeger?
