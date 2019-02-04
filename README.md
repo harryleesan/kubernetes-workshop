@@ -1,5 +1,8 @@
 # Kubernetes Workshop
 
+Workshop Register:
+[2019-02-04 CNCJ Meetup: The Kubernetes Playground](https://goo.gl/forms/nJla7fHRbjFzP9E92)
+
 <!-- vim-markdown-toc GFM -->
 
   * [Preparation](#preparation)
