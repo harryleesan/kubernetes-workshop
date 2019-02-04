@@ -211,7 +211,7 @@ service.
 
    ```bash
    # After you have uncommented the two reviews deployments
-   kubctl apply -f bookinfo.yml
+   kubectl apply -f bookinfo.yml
    ```
 
 2. Refresh Productpage in your web browser. You will see that each time you
