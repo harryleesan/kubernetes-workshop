@@ -82,13 +82,16 @@ Your **namespace** should have been created for you by the organiser prior the w
 The interaction with the cluster is done through `kubectl`. This is the
 Kubernetes client installed on your local machine that interacts with the Kubernetes cluster.
 
-1. A _bash_ script is sent to you at the beginning of the workshop. Execute the provided script to
+1. A bash script (`enroll.sh`) is provided in the repo root directory. Execute the provided script to
    enroll as a **service account**.
 
     ```bash
     chmod +x enroll.sh
     ./enroll.sh <token>
     ```
+
+    * Your namespace/user name and <token> will be emailed to the email address
+      that you entered in the Workshop Register.
 
 2. Run `kubectl get all --namespace your_namespace` to verify that you can access the cluster.
    Don't worry, it's working if you see _No resources found_.
