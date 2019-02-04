@@ -181,7 +181,7 @@ docker image and pushed. Now let's see how we can swap out the old version.
    service. You should now see two new fields in the details section.
 
 # Lab 3: Cluster metrics with Prometheus [5 minutes]
-Now your application is deployed. Let's see how it's doing from the cluster
+Now your application is deployed. Let's see how it's doing from the cluster's
 perspective.
 
 ## 3.1 Cluster Metrics
@@ -200,60 +200,68 @@ metrics through Grafana.
    now go and explore what each dashboard does.
 
 # Lab 4: Trace with Jaeger [5 minutes]
-So we have these 4 microservices 
-
-## What is Istio?
-## What is Jaeger?
-Tracing to see how the applications are doing.
+Let's take a look at how a request to Productpage triggers a chain of events to the other 3 services.
+We can do this through tracing with Jaeger (integrated with Istio).
 
 ## 4.1 Enable Istio
 
 1. Istio needs to be enabled for your namespace. Please ask any member of the workshop
-committee to enable Istio for you.
+committee to enable Istio for your namespace.
 
 2. After you have confirmation that Istio has been enabled for your namespace,
-   head over to your Kubernetes dashboard and delete all the pods.
+   head over to your Kubernetes Dashboard and delete all the pods (don't delete
+   the deployments).
 
-3. Your pods (4 Bookinfo services) will start up again. This time, you will see
-   every pod now has an `istio-proxy` sidecar container.
+3. Your pods (the 4 Bookinfo services) will start up again. This time, you will see that
+   every pod now has an `istio-proxy` sidecar container. This is the container
+   that will monitor traffic to and from your pod.
 
 ## 4.2 Access Jaeger
 
-1. Use port-forward to access Jaeger:
+1. Use port-forwarding to access Jaeger:
 
     ```bash
     kubectl -n istio-system port-forward svc/jaeger-query 16686
     ```
 
-2. Access Jaeger UI from your web browser: [http://localhost:16686](http://localhost:16686)
+2. Now you can access the Jaeger UI from your web browser: [http://localhost:16686](http://localhost:16686)
 
-# Lab 5: Deploy your BookInfo application using Helm [30 minutes]
+3. Note that you are viewing the requests coming in to the service mesh of the
+   entire cluster, so you will see traffic to the other namespaces, not just
+   yours.
 
-Run the helm charts that will deploy the BookInfo application into your
-namespace. The BookInfo application is..
-
-## What is Helm?
+# Lab 5: Deploy BookInfo using Helm [30 minutes]
+Let's install the BookInfo services using Helm charts. The helm charts for the
+services have already been created for you in the `helm-charts` directory.
 
 ## 5.1 Clean up your BookInfo services
 
-1. Delete the manifest
+1. Delete the deployments and services that we created before through
+   a manifest.
 
     ```bash
     kubectl delete -f bookinfo.yml
     ```
-2. Verify that all deployments and services are deleted from the dashboard.
+2. Verify that all deployments and services are deleted by making use of the
+   Kubernetes Dashboard.
 
 ## 5.2 Install tiller into your own namespace
 
 For more info on this approach: [Deploy Tiller in a namespace, restricted to deploying resources only in that namespace](https://docs.helm.sh/using_helm/#example-deploy-tiller-in-a-namespace-restricted-to-deploying-resources-only-in-that-namespace)
 
-```bash
-helm init --service-account tiller --tiller-namespace your_namespace
-```
+1. Simply run:
 
-Ensure tiller is running: `helm --tiller-namespace your_namespace list`
+    ```bash
+    helm init --service-account tiller --tiller-namespace your_namespace
+    ```
 
-## 5.3 Install Bookinfo as 4 services
+2. Ensure tiller is running:
+
+    ```bash
+    helm --tiller-namespace your_namespace list
+    ```
+
+## 5.3 Install Bookinfo using 4 helm charts
 
 1. Run the commands below from the `helm-charts` directory.
 
@@ -297,17 +305,14 @@ Ensure tiller is running: `helm --tiller-namespace your_namespace list`
     helm --tiller-namespace your_namespace list
     ```
 
-2. Verify your Productpage service is running (ensure that `kubectl proxy` is still running)
-
-    ```bash
-    http://localhost:8001/api/v1/namespaces/your_namespace/services/productpage:9080/proxy/productpage
-    ```
+2. Verify that your Productpage services is running from the Kubernetes Dashboard
 
 ## 5.4 Upgrade Reviews service to version 2
-We have only a single version of Reviews exist, let's bump up to version
-2.
+You will notice that we only have reviews-v1 deployed as a helm release. We have
+just added a new feature to display ratings as black stars as part of the
+Reviews service (reviews-v2). Let's upgrade our Reviews service to version 2.
 
-1. We have pushed a new image with a new version, let's upgrade our release.
+1. We have already pushed a new image with the new feature, let's upgrade our release.
 
     ```bash
     helm --tiller-namespace your_namespace upgrade \
@@ -317,7 +322,7 @@ We have only a single version of Reviews exist, let's bump up to version
     reviews reviews --debug
     ```
 
-2. Check the Product page to now see stars under the Reviews section.
+2. Check Productpage to see black stars under the Reviews section.
 
 ## 5.5 Rollback Review service to version 1
 We realised that no one likes black stars for ratings! We have to revert back to
@@ -338,9 +343,9 @@ version 1.
     reviews 1 --debug
     ```
 
-## 5.6 Install Reviews service version 3 along side version 1
+## 5.6 Install Reviews service version 3 alongside version 1
 
-1. Install another helm release, but without a service since we are using the
+1. Install another helm release, but without enabling an extra _service_ since we are using the
    same service as Reviews version 1.
 
     ```bash
@@ -354,12 +359,11 @@ version 1.
 2. Refresh Productpage a few times to see the Reviews section alternate between
    version 1 and version 3.
 
-
 # Lab 6: Clean up [5 minutes]
 
 Delete all created resources in your namespace.
 
-## 6.1 Delete helm releases
+## 6.1 Delete the helm releases
 
     ```bash
     helm --tiller-namespace your_namespace delete productpage
