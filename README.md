@@ -375,10 +375,11 @@ Delete all created resources in your namespace.
 
 ## 6.1 Delete the helm releases
 
-    ```bash
-    helm --tiller-namespace your_namespace delete productpage
-    helm --tiller-namespace your_namespace delete reviews
-    helm --tiller-namespace your_namespace delete reviews-v3
-    helm --tiller-namespace your_namespace delete details
-    helm --tiller-namespace your_namespace delete ratings
-    ```
+  ```bash
+  helm --tiller-namespace your_namespace delete productpage
+  helm --tiller-namespace your_namespace delete reviews
+  helm --tiller-namespace your_namespace delete reviews-v3
+  helm --tiller-namespace your_namespace delete details
+  helm --tiller-namespace your_namespace delete ratings
+  ```
+
