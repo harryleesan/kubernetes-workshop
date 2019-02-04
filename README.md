@@ -86,8 +86,8 @@ Kubernetes client installed on your local machine that interacts with the Kubern
    enroll as a **service account**.
 
     ```bash
-    chmod +x username-enroll.sh
-    ./username-enroll.sh <token>
+    chmod +x enroll.sh
+    ./enroll.sh <token>
     ```
 
 2. Run `kubectl get all --namespace your_namespace` to verify that you can access the cluster.
