@@ -49,7 +49,7 @@ The Kubernetes cluster should be created prior to this workshop with the followi
 
 * Kubernetes Dashboard
 * Prometheus + Grafana (through `prometheus-operator`)
-* Istio + Jaeger
+* Istio (with `cert-manager` enaabled) + Jaeger
 
 You should have the following installed on your local machine:
 
@@ -83,7 +83,9 @@ The interaction with the cluster is done through `kubectl`. This is the
 Kubernetes client installed on your local machine that interacts with the Kubernetes cluster.
 
 1. A bash script (`enroll.sh`) is provided in the repo root directory. Execute the provided script to
-   enroll as a **service account**.
+   enroll as a **service account**. Replace `USERNAME=your_namespace` (line 7) with the
+   username that is given to you. E.g. `USERNAME=harryl`. Run the following in a bash
+   terminal.
 
     ```bash
     chmod +x enroll.sh
