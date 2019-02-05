@@ -2,13 +2,16 @@
 
 set -e
 
-TOKEN=$1
 
+# Replace 'your)namespace' with the namespace provided by the organiser for this workshop.
+USERNAME=your_namespace
+if [ "$USERNAME" == "your_namespace"  ]; then echo "You need to edit enroll.sh to set your namespace"; exit -1; fi
+
+TOKEN=$1
 if [ "$TOKEN" == ""  ]; then echo "Require token."; exit -1; fi
 
 CLUSTER_NAME=library.yun.technology
 NICKNAME=library
-USERNAME=your_namespace
 MASTER_LOAD_BALANCER=library.yun.technology
 
 MASTERCRT="-----BEGIN CERTIFICATE-----
